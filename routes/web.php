@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,23 +30,33 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::get('/checkout', function () {
-    return view('checkout');
-})->name('checkout');
+// Route::get('/checkout/{camp:slug}', function () {
+//     return view('checkout');
+// })->name('checkout');
 
-Route::get('/success-checkout', function () {
-    return view('success_checkout');
-})->name('success-checkout');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 //socialite routes
-Route::get('sign-in-google',[UserController::class, 'google'])->name('user.login.google');
-Route::get('auth/google/callback',[UserController::class, 'handleProviderCallback'])->name('user.google.callback');
+Route::get('sign-in-google', [UserController::class, 'google'])->name('user.login.google');
+Route::get('auth/google/callback', [UserController::class, 'handleProviderCallback'])->name('user.google.callback');
+
+
 
 Route::middleware('auth')->group(function () {
+    //checkout routes
+    Route::get('checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('checkout/{camps:slug}', [CheckoutController::class, 'create'])->name('checkout.create');
+    Route::post('checkout/{camps}', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    //user dashboard
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
