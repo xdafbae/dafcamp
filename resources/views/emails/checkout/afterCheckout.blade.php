@@ -6,7 +6,7 @@ Hi, {{ $checkout->User->name }}
 Thank you for registering on <b>{{ $checkout->Camps->title }}</b>
 
 <x-mail::button :url="route('dashboard')">
-    Button Text
+    Dashboard
 </x-mail::button>
 
 
