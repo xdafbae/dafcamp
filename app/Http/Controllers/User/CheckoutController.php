@@ -5,8 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Models\Camps;
 use App\Models\Checkout;
 use Illuminate\Http\Request;
+use App\Http\Requests\User\Checkout\Store;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+
 
 class CheckoutController extends Controller
 {
@@ -20,10 +22,14 @@ class CheckoutController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Camps $camps)
+    public function create(Camps $camps, Request $request)
     {
         //
         
+        if ($camps->isRegistered){
+            $request->session()->flash('error', "You already registered on {$camps->title} camp.");
+            return redirect()->route('dashboard');
+        }
         return view('checkout.create', [
             'camps' => $camps,
         ]);
@@ -33,13 +39,14 @@ class CheckoutController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Camps $camps)
+    public function store(Store $request, Camps $camps)
     {
         
+        return $request->all();
        //mapping request data
        $data = $request->all();
        $data['user_id'] = Auth::id(); // Pastikan user login
-       $data['camps_id'] = $camps->id; // Pastikan nama kolom di DB adalah camp_id
+       $data['camps_id'] = $camps->id; // Pastikan nama kolom di DB adalah camps_id
    
        // Update data user
        $user = Auth::user();
