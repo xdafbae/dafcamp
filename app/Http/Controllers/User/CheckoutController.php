@@ -5,9 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Models\Camps;
 use App\Models\Checkout;
 use Illuminate\Http\Request;
-use App\Http\Requests\User\Checkout\Store;
 use App\Http\Controllers\Controller;
+use App\Mail\Checkout\AfterCheckout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\User\Checkout\Store;
 
 
 class CheckoutController extends Controller
@@ -42,7 +44,6 @@ class CheckoutController extends Controller
     public function store(Store $request, Camps $camps)
     {
         
-        return $request->all();
        //mapping request data
        $data = $request->all();
        $data['user_id'] = Auth::id(); // Pastikan user login
@@ -57,6 +58,9 @@ class CheckoutController extends Controller
    
        // Buat entri checkout
        $checkout = Checkout::create($data);
+
+       //sending email
+       Mail::to(Auth::user()->email)->send(new AfterCheckout($checkout));
    
        // Return atau redirect ke halaman sukses
        return redirect(route('checkout.success'));
@@ -95,5 +99,9 @@ class CheckoutController extends Controller
     }
     public function success(){
         return view('checkout.success');
+    }
+
+    public function invoice(Checkout $checkout){
+        return $checkout;
     }
 }
