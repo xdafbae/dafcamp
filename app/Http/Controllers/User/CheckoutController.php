@@ -63,6 +63,8 @@ class CheckoutController extends Controller
         $user->email = $data['email'];
         $user->name = $data['name'];
         $user->occupation = $data['occupation'];
+        $user->occupation = $data['phone'];
+        $user->occupation = $data['address'];
         $user->save();
 
         // Buat entri checkout
@@ -114,7 +116,7 @@ class CheckoutController extends Controller
 
     public function getSnapRedirect(Checkout $checkout)
     {
-        $orderId = $checkout->id.'-'.Str::random(5);
+        $orderId = $checkout->id . '-' . Str::random(5);
         $price = $checkout->Camps->price * 1000;
 
         $checkout->midtrans_booking_code = $orderId;
@@ -131,7 +133,7 @@ class CheckoutController extends Controller
             'name' => "Payment for {$checkout->Camps->title} Camp"
         ];
 
-       
+
 
         $userData = [
             "first_name" => $checkout->User->name,
@@ -174,7 +176,7 @@ class CheckoutController extends Controller
 
     public function midtransCallback(Request $request)
     {
-        $notif = new Midtrans\Notification();
+        $notif = $request->method() == 'POST' ? new Midtrans\Notification() : Midtrans\Transaction::status($request->order_id);
 
         $transaction_status = $notif->transaction_status;
         $fraud = $notif->fraud_status;
@@ -211,7 +213,8 @@ class CheckoutController extends Controller
             // TODO set payment status in merchant's database to 'expire'
             $checkout->payment_status = 'failed';
         }
+
         $checkout->save();
-        return view('checkout.success');
+        return view('checkout/success');
     }
 }
