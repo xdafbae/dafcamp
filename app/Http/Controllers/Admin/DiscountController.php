@@ -39,7 +39,6 @@ class DiscountController extends Controller
         $discount = Discount::create($request->all());
         $request->session()->flash('success', 'A new discount has been created');
         return redirect()->route('admin.discount.index');
-        
     }
 
     /**
