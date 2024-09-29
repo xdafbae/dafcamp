@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8 offset-2">
-                <div class="card">
+                <div class="card mt-3">
                     <div class="card-header">
                         My Camps
                     </div>
@@ -25,12 +25,20 @@
                                     <tr>
                                         <td>{{ $checkout->User->name }}</td>
                                         <td>{{ $checkout->Camps->title }}</td>
-                                        <td>{{ $checkout->Camps->price }}k</td>
+                                        <td>
+                                            <strong>
+                                                Rp.{{ $checkout->total }}
+                                                @if ($checkout->discount_id)
+                                                    <span class="badge bg-success">Disc
+                                                        {{ $checkout->discount_percentage }}%</span>
+                                                @endif
+                                            </strong>
+                                        </td>
                                         <td>{{ $checkout->created_at->format('M d Y') }}</td>
                                         <td>
                                             <strong>{{ $checkout->payment_status }}</strong>
                                         </td>
-                                        
+
                                     </tr>
                                 @empty
                                     <tr>
